@@ -1,0 +1,175 @@
+unit Unit1;
+
+interface
+
+uses
+  IniFiles, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Menus;
+
+type
+  TForm1 = class(TForm)
+
+    ComboBox1: TComboBox;
+    Find: TButton;
+    GroupBox: TGroupBox;
+    FindFileList: TListBox;
+    mm1: TMainMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    label2: TLabel;
+    procedure FindClick(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+    procedure N2Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+  StartHDD:string;
+  FirstFolder:string;
+  ArchiveFile:string;
+  PdfFile:string;
+  MusicFile:string;
+  DocumentFile:string;
+  ImageFile:string;
+  ExeFile:string;
+  DjvuFile:string;
+  IsoFile:string;
+  TorrentFile:string;
+
+implementation
+
+uses About, Unit3;
+
+{$R *.dfm}
+
+
+procedure FindFiles (path:string; format:string);
+var
+    F:TSearchRec;
+    Attr:Integer;
+    i:Integer;
+begin
+Attr := faAnyFile;
+FirstFolder := 'H:\';
+
+FindFirst(format, Attr, F);
+
+    if F.Name <> '' then
+      begin
+        Form1.label2.Caption := 'File found';
+        Form1.findfilelist.Items.Add(F.Name);
+        MoveFile(PChar(FirstFolder + F.name), PChar(path + F.name));
+        while FindNext(F) = 0 do begin
+          Form1.FindFileList.Items.Add(F.Name);
+          MoveFile(PChar(FirstFolder + F.name), PChar(path + F.name));
+        end;
+      end
+    else
+      Form1.label2.caption := 'File not Found';
+    //i := 0;
+end;
+
+procedure TForm1.FindClick(Sender: TObject);
+var
+    F:TSearchRec;
+    ISO, GZ, RAR, ZIP, JPG, PNG, MP3, PDF, EXE, DJVU, TORRENT, DOC, DOCX:string;
+    PathEnd:string;
+    ini:TIniFile;
+begin
+  ini := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'param.ini');
+  case ComboBox1.ItemIndex of
+  0:begin
+    FindFileList.Clear;
+    GroupBox.Caption := 'ArchiveFiles';
+    ArchiveFile := ini.ReadString('Folders', 'ArchiveFile', 'Error');
+    RAR := 'H:\*.rar';
+    ZIP := 'H:\*.zip';
+    GZ := 'H:\*.gz';
+    FindFiles(ArchiveFile, RAR);
+    FindFiles(ArchiveFile, ZIP);
+    FindFiles(ArchiveFile, GZ);
+  end;
+  1:begin
+    FindFileList.Clear;
+    GroupBox.Caption := 'PDfFiles';
+    PdfFile := ini.ReadString('Folders', 'PdfFile', 'Error');
+    PDF := 'H:\*.pdf';
+    FindFiles(PdfFile, PDF);
+  end;
+  2:begin
+    FindFileList.Clear;
+    GroupBox.Caption := 'MusicFiles';
+    MusicFile := ini.ReadString('Folders', 'MusicFile', 'Error');
+    MP3 := 'H:\*.mp3';
+    FindFiles(MusicFile, MP3);
+  end;
+  3:begin
+    FindFileList.Clear;
+    GroupBox.Caption := 'DocumentFiles';
+    DocumentFile := ini.ReadString('Folders', 'DocumentFile', 'Error');
+    DOC := 'H:\*.doc';
+    DOCX := 'H:\*.docx';
+    FindFiles(DocumentFile, DOC);
+    FindFiles(DocumentFile, DOCX);
+  end;
+  4:begin
+    FindFileList.Clear;
+    GroupBox.Caption := 'ImageFiles';
+    ImageFile := ini.ReadString('Folders', 'ImageFile', 'Error');
+    JPG := 'H:\*.jpg';
+    PNG := 'H:\*.png';
+    FindFiles(ImageFile, JPG);
+    FindFiles(ImageFile, PNG);
+  end;
+  5:begin
+    FindFileList.Clear;
+    GroupBox.Caption := 'ExeFiles';
+    ExeFile := ini.ReadString('Folders', 'ExeFile', 'Error');
+    EXE := 'H:\*.exe';
+    FindFiles(ExeFile, EXE);
+  end;
+  6:begin
+    FindFileList.Clear;
+    GroupBox.Caption := 'DjvuFiles';
+    DjvuFile := ini.ReadString('Folders', 'DjvuFile', 'Error');
+    DJVU := 'H:\*.djvu';
+    FindFiles(DjvuFile, DJVU);
+  end;
+  7:begin
+    FindFileList.Clear;
+    GroupBox.Caption := 'IsoFiles';
+    IsoFile := ini.ReadString('Folders', 'IsoFile', 'Error');
+    ISO := 'H:\*.iso';
+    FindFiles(IsoFile, ISO);
+  end;
+  8:begin
+      FindFileList.Clear;
+      GroupBox.Caption := 'TorrentFiles';
+      TorrentFile := ini.ReadString('Folders', 'TorrentFile', 'Error');
+      TORRENT := 'H:\*.torrent';
+      FindFiles(TorrentFile, TORRENT);
+  end;
+  else
+    Form1.label2.caption := 'Не выбран пункт';
+  end;
+end;
+
+procedure TForm1.N4Click(Sender: TObject);
+begin
+Form2.show;
+end;
+
+procedure TForm1.N2Click(Sender: TObject);
+begin
+//ShowMessage('В разработке');
+Form3.Show;
+end;
+
+
+end.
